@@ -2,7 +2,7 @@ const PORT = process.env.PORT || 8000
 const express = require('express')
 const axios = require('axios')
 const cheerio = require('cheerio')
-const { response } = require('express')
+    // const { response } = require('express')
 
 // const cors = require('cors')
 
@@ -98,45 +98,30 @@ newspapers.forEach(newspaper => {
                 })
             })
 
-        }).catch(error => console.log(error.data))
+        }).catch(error => console.log(error))
 })
 
 app.get("/", (req, res) => {
-    res.send("<h1>welcome to wethera app</h1>")
+    res.json("<h1>welcome to wethera app</h1>")
 })
 
 app.get("/news", (req, res) => {
-    // res.send("hi")
-    // axios.get('https://www.theguardian.com/environment/climate-crisis')
-    //     .then(function(response) {
-    //         // console.log(response.data);
-    //         const html = response.data;
-    //         const $ = cheerio.load(html)
-    //         $('a:contains("climate")', html).each(function() {
-    //             const title = $(this).text()
-    //             const url = $(this).attr('href')
-    //             articles.push({
-    //                 title,
-    //                 url
-    //             })
-    //         })
-    //         res.json(articles)
-    //     }).catch(error => console.log(error.data))
     res.json(articles)
 })
 
-app.get('/news/:newspaperId', async(req, res) => {
+app.get('/news/:newspaperId', (req, res) => {
     const newspaperId = req.params.newspaperId;
     const newspaperAddress = newspapers.filter(newspaper => newspaper.name == newspaperId)[0].address
     const newspaperBase = newspapers.filter(newspaper => newspaper.name == newspaperId)[0].base
-    console.log(newspaperAddress);
+        // console.log(newspaperAddress);
 
     axios.get(newspaperAddress)
-        .then((response) => {
+        .then(response => {
             const html = response.data;
             const $ = cheerio.load(html)
 
             const specificArticles = []
+
             $('a:contains("climate")', html).each(function() {
                 const title = $(this).text()
                 const url = $(this).attr('href')
@@ -147,7 +132,7 @@ app.get('/news/:newspaperId', async(req, res) => {
                 })
             })
             res.json(specificArticles)
-        }).catch(error => console.log(error.data))
+        }).catch(error => console.log(error))
 })
 
 app.listen(PORT, () => {
